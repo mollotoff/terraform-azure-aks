@@ -1,4 +1,98 @@
-# terraform-aws-eks
+# Hey Docker run EKS please
+
+![kubernautic-ref](images/rdaas_reference_implementation.png)
+
+## Blog Post
+
+--> ToDo: coming asap, if needed ;-)
+
+## Why this?
+
+Why not? This implementation provides an easy way to deploy an AWS EKS cluster with autoscaling support for spot instances with a single command with additional addons like the ingress controller along with the EFS provisioner, Vault, Prometheus, Grafana and more to use with EKS. You can easily extend the implementation to use on-demans instances as well by extending the node groups in the `main.tf` file (more about this later).
+
+## TL;DR
+
+Build a Docker image `docker/eks` from the Dockerfile provided in this folder with some additional tools and then run it to deploy an EKS Cluster with a single command.
+
+### Prerequisites
+
+- [Access to AWS with Minimum IAM permissions needed to setup an EKS Cluster](https://github.com/terraform-aws-modules/terraform-aws-eks/blob/master/docs/iam-permissions.md)
+
+### Hey Docker run EKS please
+
+You can either build your own image from the Dockerfile provided in this repo or use the kubernautslabs/eks image and run it to deploy EKS.
+
+After running the docker run command below, you'll be asked to provide the cluster name and the AWS region.
+
+Please note:
+
+- The cluster name should be unique, since we use the cluster name as the S3 bucket name!
+- It is recommended to use something like project-customer-stage-eks-spot as a convention for the cluster name, e.g. myproject-business-unit-dev-qa-eks-spot.
+
+```
+# build your own image from Dockerfile (recommended)
+git clone https://github.com/arashkaffamanesh/terraform-aws-eks.git
+cd terraform-aws-eks
+docker build -t docker-eks .
+docker run -it --rm -v "$HOME/.aws/:/root/.aws" -v "$PWD:/tmp" docker-eks -c "cd /tmp; ./2-deploy-eks-cluster.sh"
+```
+
+or at your own risk, if you might want to trust me :-)
+
+```
+# deploy EKS with kubernautslabs/eks image
+git clone https://github.com/arashkaffamanesh/terraform-aws-eks.git
+cd terraform-aws-eks
+docker run -it --rm -v "$HOME/.aws/:/root/.aws" -v "$PWD:/tmp" kubernautslabs/eks -c "cd /tmp; ./2-deploy-eks-cluster.sh"
+```
+
+### What do you get?
+
+An EKS cluster with 1 spot instance and the cluster autoscaler installed.
+
+### How do I know it works?
+
+After the deployment you should run:
+
+```
+docker run -it --rm -v "$HOME/.aws/:/root/.aws" -v "$PWD:/tmp" kubernautslabs/eks
+cd /tmp/
+ll
+export KUBECONFIG=kubeconfig_<your cluster name>
+k get pods -A
+```
+
+If you get something like this, you'd be happy:
+
+```
+root@9aef95e6699a:/tmp/arash-docker-eks# k get pods -A
+NAMESPACE     NAME                                  READY   STATUS    RESTARTS   AGE
+kube-system   aws-node-4z9dm                        1/1     Running   0          6m28s
+kube-system   cluster-autoscaler-5f84699764-jbb66   1/1     Running   0          6m3s
+kube-system   coredns-5fdf64ff8-bxpgx               1/1     Running   0          10m
+kube-system   coredns-5fdf64ff8-ncbqw               1/1     Running   0          10m
+kube-system   kube-proxy-464gp                      1/1     Running   0          6m28s
+kube-system   metrics-server-7578984995-6pptz       1/1     Running   0          6m20s
+```
+
+### Documentation in the Base Module
+
+Please refer to the documentation and additional notes in the `README.md` file under the base module for testing or how to add additional components like the ingress controller along with the EFS provisioner, Vault, Prometheus, Grafana and more.
+
+# Clean Up!!!
+
+Please refer to the `Clean-Up: delete clusters` section in your cluster module folder.
+
+You should love to run something like this after running make destroy from the cluster module folder:
+
+```
+# please replace <cluster_name> with your provided cluster name
+make destroy
+aws s3 rb s3://<cluster_name> --force
+aws ec2 delete-key-pair --key-name <cluster_name>-key &>/dev/null
+```
+
+## Origin of this Terraform EKS Implementation
 
 [![Lint Status](https://github.com/terraform-aws-modules/terraform-aws-eks/workflows/Lint/badge.svg)](https://github.com/terraform-aws-modules/terraform-aws-eks/actions)
 [![LICENSE](https://img.shields.io/github/license/terraform-aws-modules/terraform-aws-eks)](https://github.com/terraform-aws-modules/terraform-aws-eks/blob/master/LICENSE)
@@ -17,7 +111,7 @@ Read the [AWS docs on EKS to get connected to the k8s dashboard](https://docs.aw
 
 ## Important note
 
-The default `cluster_version`is now 1.16. Kubernetes 1.16 includes a number of deprecated API removals, and you need to ensure your applications and add ons are updated, or workloads could fail after the upgrade is complete. For more information on the API removals, see the [Kubernetes blog post](https://kubernetes.io/blog/2019/07/18/api-deprecations-in-1-16/). For action you may need to take before upgrading, see the steps in the [EKS documentation](https://docs.aws.amazon.com/eks/latest/userguide/update-cluster.html#1-16-prequisites).
+The default `cluster_version` is now 1.16. Kubernetes 1.16 includes a number of deprecated API removals, and you need to ensure your applications and add ons are updated, or workloads could fail after the upgrade is complete. For more information on the API removals, see the [Kubernetes blog post](https://kubernetes.io/blog/2019/07/18/api-deprecations-in-1-16/). For action you may need to take before upgrading, see the steps in the [EKS documentation](https://docs.aws.amazon.com/eks/latest/userguide/update-cluster.html#1-16-prequisites).
 
 Please set explicitly your `cluster_version` to an older EKS version until your workloads are ready for Kubernetes 1.16.
 
@@ -172,7 +266,7 @@ MIT Licensed. See [LICENSE](https://github.com/terraform-aws-modules/terraform-a
 | cluster\_log\_retention\_in\_days | Number of days to retain log events. Default retention - 90 days. | `number` | `90` | no |
 | cluster\_name | Name of the EKS cluster. Also used as a prefix in names of related resources. | `string` | n/a | yes |
 | cluster\_security\_group\_id | If provided, the EKS cluster will be attached to this security group. If not given, a security group will be created with necessary ingress/egress to work with the workers | `string` | `""` | no |
-| cluster\_version | Kubernetes version to use for the EKS cluster. | `string` | n/a | yes |
+| cluster\_version | Kubernetes version to use for the EKS cluster. | `string` | `"1.16"` | no |
 | config\_output\_path | Where to save the Kubectl config file (if `write_kubeconfig = true`). Assumed to be a directory if the value ends with a forward slash `/`. | `string` | `"./"` | no |
 | create\_eks | Controls if EKS resources should be created (it affects almost all resources) | `bool` | `true` | no |
 | eks\_oidc\_root\_ca\_thumbprint | Thumbprint of Root CA for EKS OIDC, Valid until 2037 | `string` | `"9e99a48a9960b14926bb7f3b02e22da2b0ab7280"` | no |
@@ -224,7 +318,7 @@ MIT Licensed. See [LICENSE](https://github.com/terraform-aws-modules/terraform-a
 | cluster\_endpoint | The endpoint for your EKS Kubernetes API. |
 | cluster\_iam\_role\_arn | IAM role ARN of the EKS cluster. |
 | cluster\_iam\_role\_name | IAM role name of the EKS cluster. |
-| cluster\_id | The name/id of the EKS cluster. Will block on cluster creation until the cluster is really ready |
+| cluster\_id | The name/id of the EKS cluster. |
 | cluster\_oidc\_issuer\_url | The URL on the EKS cluster OIDC Issuer |
 | cluster\_primary\_security\_group\_id | The cluster primary security group ID created by the EKS cluster on 1.14 or later. Referred to as 'Cluster security group' in the EKS console. |
 | cluster\_security\_group\_id | Security group ID attached to the EKS cluster. On 1.14 or later, this is the 'Additional security groups' in the EKS console. |

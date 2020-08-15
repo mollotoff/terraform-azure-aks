@@ -194,6 +194,16 @@ resource "aws_autoscaling_group" "workers_launch_template" {
         "value"               = "owned"
         "propagate_at_launch" = true
       },
+      {
+        "key"                 = "cakey1"
+        "value"               = "k8s.io/cluster-autoscaler/enabled"
+        "propagate_at_launch" = "true"
+      },
+      {
+        "key"                 = "cakey2"
+        "value"               = "k8s.io/cluster-autoscaler/${aws_eks_cluster.this[0].name}"
+        "propagate_at_launch" = "true"
+      },
     ],
     local.asg_tags,
     lookup(
@@ -475,9 +485,6 @@ resource "random_pet" "workers_launch_template" {
         ]
       )
     )
-  }
-  lifecycle {
-    create_before_destroy = true
   }
 }
 

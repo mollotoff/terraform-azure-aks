@@ -1,0 +1,10 @@
+awsRegion: eu-central-1
+
+rbac:
+  create: true
+  serviceAccountAnnotations:
+    eks.amazonaws.com/role-arn: "arn:aws:iam:xxxxxxxxxxxx:role/cluster-autoscaler"
+
+autoDiscovery:
+  clusterName: docker-eks-spot
+  enabled: true
