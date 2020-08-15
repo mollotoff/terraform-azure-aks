@@ -8,7 +8,7 @@
 
 ## What is this about
 
-You can run the latest EKS version with Kubernetes 1.17.9 with a single `docker run` command, without the need to know anything about Terraform. And the best thin about this is the support of Auto-Scaling of Spot Instances, which helps to reduce our AWS EKS costs by up to 70% with AMD64 and up-to 90% with ARM Mg6 Graviton instances! 
+You can run the latest EKS version with Kubernetes 1.17.9 with a single `docker run` command, without the need to know anything about Terraform. And the best thing about this is the support of Auto-Scaling of Spot Instances, which helps to reduce our AWS EKS costs by up to 70% with AMD64 and up-to 90% with ARM Mg6 Graviton instances! 
 
 ## Why this?
 
