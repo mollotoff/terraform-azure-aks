@@ -60,7 +60,7 @@ After the deployment you should run:
 
 ```
 docker run -it --rm -v "$HOME/.aws/:/root/.aws" -v "$PWD:/tmp" kubernautslabs/eks
-cd /tmp/
+cd /tmp/<your cluster name>
 ll
 export KUBECONFIG=kubeconfig_<your cluster name>
 k get pods -A
