@@ -8,7 +8,7 @@
 
 ## Why this?
 
-Why not? This implementation provides an easy way to deploy an AWS EKS cluster with autoscaling support for spot instances with a single command with additional addons like the ingress controller along with the EFS provisioner, Vault, Prometheus, Grafana and more to use with EKS. You can easily extend the implementation to use on-demans instances as well by extending the node groups in the `main.tf` file (more about this later).
+Why not? This implementation provides an easy way to deploy an AWS EKS cluster with autoscaling support for spot instances with a single command with additional addons like the ingress controller along with the EFS provisioner, Vault, Prometheus, Grafana and more to use with EKS. You can easily extend the implementation to use on-demand instances as well by extending the node groups in the `main.tf` file (more about this later).
 
 ## TL;DR
 
