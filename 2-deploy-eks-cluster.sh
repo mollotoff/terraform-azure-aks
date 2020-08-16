@@ -104,7 +104,7 @@ function ask_yes_or_no() {
 }
 
 if [[ "no" == $(ask_yes_or_no "Are you sure you wish to continue?") || \
-      "no" == $(ask_yes_or_no "Would you like to have a cup of coffee, tee or a cold German Bier? ;-)") ]]
+      "no" == $(ask_yes_or_no "Would you like to have a cup of coffee, tee or a cold German Beer? ;-)") ]]
 then
     echo "Okay, skipped!"
     echo "You can might want to delete the cluster module folder or follow the README in the cluster folder and go though the installation steps manually"

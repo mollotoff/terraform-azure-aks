@@ -33,18 +33,21 @@ Please note:
 - The cluster name should be unique, since we use the cluster name as the S3 bucket name!
 - It is recommended to use something like project-customer-stage-eks-spot as a convention for the cluster name, e.g. myproject-business-unit-dev-qa-eks-spot.
 
+### Build your own image from Dockerfile (recommended)
+
 ```
-# build your own image from Dockerfile (recommended)
 git clone https://github.com/arashkaffamanesh/terraform-aws-eks.git
 cd terraform-aws-eks
 docker build -t docker-eks .
 docker run -it --rm -v "$HOME/.aws/:/root/.aws" -v "$PWD:/tmp" docker-eks -c "cd /tmp; ./2-deploy-eks-cluster.sh"
 ```
 
-or at your own risk, if you might want to trust me :-)
+### Deploy EKS with kubernautslabs/eks image
+
+Do this on your own risk, if you might want to trust me :-)
 
 ```
-# deploy EKS with kubernautslabs/eks image
+# 
 git clone https://github.com/arashkaffamanesh/terraform-aws-eks.git
 cd terraform-aws-eks
 docker run -it --rm -v "$HOME/.aws/:/root/.aws" -v "$PWD:/tmp" kubernautslabs/eks -c "cd /tmp; ./2-deploy-eks-cluster.sh"
