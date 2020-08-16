@@ -93,5 +93,18 @@ module "eks" {
       kubelet_extra_args      = "--node-labels=node.kubernetes.io/lifecycle=spot"
       public_ip               = true
     },
+    /*
+    {
+      name                          = "on-demand"
+      instance_type                 = "t3a.medium"
+      additional_userdata           = "echo foo bar"
+      asg_max_size         = 2
+      asg_min_size         = 1
+      asg_desired_capacity = 1
+      kubelet_extra_args   = "--node-labels=kubernetes.io/lifecycle=monitoring"
+      public_ip            = true
+      # additional_security_group_ids = [aws_security_group.worker_group_mgmt_one.id]
+    },
+    */
   ]
 }

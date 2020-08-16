@@ -2,9 +2,9 @@
 
 ![kubernautic-ref](images/rdaas_reference_implementation.png)
 
-## Blog Post
+## Related Blog Post
 
---> ToDo: coming asap, if needed ;-)
+https://link.medium.com/wx00lnCZZ8 
 
 ## What is this about
 
