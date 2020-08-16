@@ -44,10 +44,8 @@ docker run -it --rm -v "$HOME/.aws/:/root/.aws" -v "$PWD:/tmp" docker-eks -c "cd
 
 ### Deploy EKS with kubernautslabs/eks image
 
-Do this on your own risk, if you might want to trust me :-)
-
 ```
-# 
+# Do this on your own risk, if you might want to trust me :-)
 git clone https://github.com/arashkaffamanesh/terraform-aws-eks.git
 cd terraform-aws-eks
 docker run -it --rm -v "$HOME/.aws/:/root/.aws" -v "$PWD:/tmp" kubernautslabs/eks -c "cd /tmp; ./2-deploy-eks-cluster.sh"
