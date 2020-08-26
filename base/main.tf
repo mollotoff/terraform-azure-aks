@@ -62,6 +62,8 @@ module "vpc" {
   private_subnets      = ["10.2.0.0/20", "10.2.16.0/20", "10.2.32.0/20"]
   public_subnets       = ["10.2.48.0/20", "10.2.64.0/20", "10.2.80.0/20"]
   enable_dns_hostnames = true
+  enable_nat_gateway = true
+  # enable_vpn_gateway = true
 
   tags = {
     "kubernetes.io/cluster/${local.cluster_name}" = "shared"
@@ -76,8 +78,8 @@ module "eks" {
   # version = "~> 12.2"
   cluster_name    = local.cluster_name
   cluster_version = var.cluster_version
-  subnets         = module.vpc.public_subnets
-  # subnets      = module.vpc.private_subnets
+  # subnets         = module.vpc.public_subnets
+  subnets      = module.vpc.private_subnets
   vpc_id = module.vpc.vpc_id
   key_name= var.key_name
 
@@ -91,7 +93,7 @@ module "eks" {
       asg_max_size            = 3
       asg_desired_capacity    = 1
       kubelet_extra_args      = "--node-labels=node.kubernetes.io/lifecycle=spot"
-      public_ip               = true
+      public_ip               = false
     },
     /*
     {
@@ -101,8 +103,8 @@ module "eks" {
       asg_max_size         = 2
       asg_min_size         = 1
       asg_desired_capacity = 1
-      kubelet_extra_args   = "--node-labels=kubernetes.io/lifecycle=monitoring"
-      public_ip            = true
+      kubelet_extra_args   = "--node-labels=spot=false,node.kubernetes.io/nodeselector=mongodb"
+      public_ip            = false
       # additional_security_group_ids = [aws_security_group.worker_group_mgmt_one.id]
     },
     */
