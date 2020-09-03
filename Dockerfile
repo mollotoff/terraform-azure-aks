@@ -1,3 +1,6 @@
+FROM mcr.microsoft.com/azure-cli
+# NOTE: INSTALLS AZURE-CLI
+
 FROM ubuntu:bionic
 
 ENV KUBE_LATEST_VERSION="v1.18.3"
@@ -62,13 +65,12 @@ RUN wget -q https://get.helm.sh/helm-${HELM3_VERSION}-linux-amd64.tar.gz -O - | 
 RUN wget -q https://get.helm.sh/helm-${HELM2_VERSION}-linux-amd64.tar.gz -O - | tar -xzO linux-amd64/helm > /usr/local/bin/helm2 \
     && chmod +x /usr/local/bin/helm2
 
-# Install aws cli
-
-RUN curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-RUN unzip awscliv2.zip
-RUN ./aws/install \
-    && rm awscliv2.zip \
-    && rm -r aws
+# EDIT Install azure cli
+#RUN curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+#RUN unzip awscliv2.zip
+#RUN ./aws/install \
+#    && rm awscliv2.zip \
+#    && rm -r aws
 
 # Install Terraform
 
@@ -78,11 +80,10 @@ RUN wget https://releases.hashicorp.com/terraform/0.13.0/terraform_0.13.0_linux_
     && mv terraform /usr/local/bin/ \
     && rm terraform_0.13.0_linux_amd64.zip
 
-# Install aws-iam-authenticator
-
-RUN wget https://github.com/kubernetes-sigs/aws-iam-authenticator/releases/download/v0.5.1/aws-iam-authenticator_0.5.1_linux_amd64 \
-    && chmod +x aws-iam-authenticator_0.5.1_linux_amd64 \
-    && mv aws-iam-authenticator_0.5.1_linux_amd64 /usr/local/bin/aws-iam-authenticator
+# EDIT Install aws-iam-authenticator
+#RUN wget https://github.com/kubernetes-sigs/aws-iam-authenticator/releases/download/v0.5.1/aws-iam-authenticator_0.5.1_linux_amd64 \
+#    && chmod +x aws-iam-authenticator_0.5.1_linux_amd64 \
+#    && mv aws-iam-authenticator_0.5.1_linux_amd64 /usr/local/bin/aws-iam-authenticator
 
 RUN mkdir -p ~/.terraform.d/plugins && \
     curl -Ls https://api.github.com/repos/gavinbunney/terraform-provider-kubectl/releases/latest \
